@@ -19,11 +19,11 @@ const appReducer = (state, action) => {
 			return state.filter((item) => item.id !== action.payload);
 		}
 		case 'COMPLETED': {
-			state.map((item) => {
+			return state.map((item) => {
 				if (item.id === action.payload) {
 					return {
 						...item,
-						completed: item.completed
+						completed: !item.completed
 					};
 				}
 				return item;
