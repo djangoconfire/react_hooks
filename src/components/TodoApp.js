@@ -1,10 +1,13 @@
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer, useContext, useEffect, useRef } from 'react';
 
 const Context = React.createContext();
 
 const appReducer = (state, action) => {
 	console.log('state', state);
 	switch (action.type) {
+		case 'RESET': {
+			return action.payload;
+		}
 		case 'ADD_TODO': {
 			return [
 				...state,
@@ -37,6 +40,28 @@ const appReducer = (state, action) => {
 
 export default function TodosApp() {
 	const [ state, dispatch ] = useReducer(appReducer, []);
+
+	const didRun = useRef(false);
+
+	// useEffect(() => {
+	// 	const raw = localStorage.getItem('data');
+	// 	dispatch({ type: 'RESET', payload: JSON.parse(raw) });
+	// }, []);
+
+	useEffect(() => {
+		if (!didRun.current) {
+			const raw = localStorage.getItem('data');
+			dispatch({ type: 'RESET', payload: JSON.parse(raw) });
+			didRun.current = true;
+		}
+	});
+
+	useEffect(
+		() => {
+			localStorage.setItem('data', JSON.stringify(state));
+		},
+		[ state ]
+	);
 	return (
 		<Context.Provider value={dispatch}>
 			<h1>Todos App</h1>
